@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Adoption Readiness — a diagnostic by Rose Laguana</title>
+
+  <style>
+    /* ======================================================
+       DESIGN TOKENS — matches portfolio-site / literacy scorecard
+    ====================================================== */
+    :root {
+      --bg:          #0b0b0c;
+      --bg-deep:     #060607;
+      --card:        #141416;
+      --card-top:    #1a1a1d;
+
+      --white:       #ffffff;
+      --ink:         #ece9e2;
+      --muted:       #a4a09a;
+      --faint:       #6f6c67;
+
+      --gold:        #c8a951;
+      --gold-soft:   rgba(200,169,81,0.30);
+      --gold-dim:    rgba(200,169,81,0.12);
+      --highlight:   #f4d774;
+
+      --teal:        #4ba8a0;
+      --teal-soft:   rgba(75,168,160,0.25);
+
+      --foundation:  #c0563f;
+      --experiment:  #d4954a;
+      --scaling:     #4ba8a0;
+      --operating:   #4caf6a;
+
+      --line:        rgba(255,255,255,0.08);
+      --maxw:        860px;
+
+      --serif: "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+      --sans:  -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: -20vh; left: 50%;
+      transform: translateX(-50%);
+      width: 120vw; height: 70vh;
+      background: radial-gradient(ellipse at center, var(--gold-dim) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem 5rem;
+    }
+
+    /* TYPOGRAPHY */
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      line-height: 1.16;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.4rem;
+    }
+    h1 span { color: var(--gold); }
+
+    .tagline { color: var(--muted); font-size: 1.02rem; max-width: 46rem; }
+
+    h2 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 1.35rem;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    /* HEADER */
+    header {
+      margin-bottom: 2.4rem;
+      padding-bottom: 1.8rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .meta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 0.9rem; }
+    .meta-tag {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.22em 0.75em; border-radius: 2px;
+      background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-soft);
+    }
+    .meta-tag.demo { background: var(--teal-soft); color: var(--teal); border-color: var(--teal-soft); }
+
+    /* INTRO CALLOUT */
+    .callout {
+      background: linear-gradient(135deg, #0e1218 0%, #0d0f0e 100%);
+      border: 1px solid var(--teal-soft);
+      border-left: 3px solid var(--teal);
+      border-radius: 4px;
+      padding: 1.5rem 1.7rem;
+      margin-bottom: 2.4rem;
+    }
+    .callout-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 0.6rem;
+    }
+    .callout p { font-size: 0.98rem; line-height: 1.7; color: var(--ink); }
+    .callout strong { color: var(--white); font-weight: 600; }
+
+    /* DEMO PRESET BAR */
+    .preset-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.7rem;
+    }
+    .preset-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.6rem; }
+    .preset-btn {
+      background: var(--card); border: 1px solid var(--line); color: var(--ink);
+      font-family: var(--sans); font-size: 0.86rem; font-weight: 600;
+      padding: 0.65em 1.05em; border-radius: 4px; cursor: pointer;
+      transition: border-color 0.18s, color 0.18s, background 0.18s; text-align: left;
+    }
+    .preset-btn:hover { border-color: var(--gold-soft); color: var(--gold); }
+    .preset-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .preset-btn small { display: block; font-weight: 400; font-size: 0.72rem; color: var(--faint); margin-top: 0.15rem; }
+    .preset-btn.active small { color: var(--gold-soft); }
+
+    /* OVERALL READINESS BANNER */
+    .score-banner {
+      display: flex; align-items: center; gap: 1.8rem; flex-wrap: wrap;
+      background: var(--card-top); border: 1px solid var(--line);
+      border-radius: 4px; padding: 1.5rem 1.8rem; margin-bottom: 0.6rem;
+    }
+    .score-number {
+      font-family: var(--serif); font-size: 3.4rem; font-weight: 600;
+      color: var(--gold); line-height: 1; min-width: 4rem;
+    }
+    .score-detail { flex: 1; min-width: 220px; }
+    .band-name {
+      font-family: var(--serif); font-size: 1.3rem; font-weight: 600;
+      color: var(--white); margin-bottom: 0.2rem;
+    }
+    .band-stage { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .score-bar-wrap { height: 8px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease, background 0.3s; }
+    .score-scale { display: flex; justify-content: space-between; margin-top: 0.4rem; }
+    .score-scale span { font-size: 0.66rem; color: var(--faint); }
+    .reset-btn {
+      background: transparent; border: 1px solid var(--line); color: var(--muted);
+      font-size: 0.78rem; padding: 0.4em 0.9em; border-radius: 3px; cursor: pointer;
+      transition: border-color 0.18s, color 0.18s; white-space: nowrap;
+    }
+    .reset-btn:hover { border-color: var(--gold-soft); color: var(--gold); }
+    .score-note { font-size: 0.79rem; color: var(--faint); font-style: italic; margin-bottom: 2.4rem; padding-left: 0.2rem; }
+
+    /* RECOMMENDATION PANEL */
+    .rec-panel {
+      background: linear-gradient(135deg, #14110a 0%, #0d0f0e 100%);
+      border: 1px solid var(--gold-soft);
+      border-radius: 4px; padding: 1.6rem 1.8rem; margin-bottom: 3rem;
+    }
+    .rec-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.7rem;
+    }
+    .rec-headline { font-size: 1.02rem; color: var(--ink); line-height: 1.66; margin-bottom: 0.9rem; }
+    .rec-move {
+      font-size: 0.95rem; color: var(--ink); line-height: 1.6;
+      padding-top: 0.9rem; border-top: 1px solid var(--line);
+    }
+    .rec-move strong { color: var(--gold); font-weight: 600; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-family: var(--serif); font-weight: 600; font-size: 1.45rem;
+      color: var(--white); margin-bottom: 0.4rem; padding-top: 0.5rem;
+    }
+    .section-divider { border: none; border-top: 1px solid var(--line); margin-bottom: 1.8rem; }
+
+    /* DIMENSION CARDS */
+    .dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .dim-grid { grid-template-columns: 1fr; } }
+
+    .dim-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 4px;
+      padding: 1.3rem 1.4rem 1.3rem; transition: border-color 0.2s;
+    }
+    .dim-card:hover { border-color: var(--gold-soft); }
+    .dim-name { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.35rem; }
+    .dim-measures { font-size: 0.82rem; color: var(--faint); line-height: 1.5; margin-bottom: 0.9rem; }
+
+    .level-bar-wrap { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.5rem; }
+    .level-bar-track { flex: 1; height: 7px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
+    .level-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 100%); transition: width 0.3s ease; }
+    .level-value { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; color: var(--gold); min-width: 1.6rem; text-align: right; line-height: 1; }
+    .level-stage { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem; }
+
+    .level-controls { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.9rem; }
+    .adj-btn {
+      width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+      background: transparent; border: 1px solid var(--line); color: var(--muted);
+      border-radius: 3px; cursor: pointer; font-size: 1rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s; flex-shrink: 0;
+    }
+    .adj-btn:hover { border-color: var(--gold-soft); color: var(--gold); }
+    .level-slider {
+      flex: 1; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.10); outline: none; cursor: pointer;
+    }
+    .level-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: var(--thumb, var(--gold)); cursor: pointer; border: 2px solid var(--bg); transition: background 0.2s;
+    }
+    .level-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--thumb, var(--gold)); cursor: pointer; border: 2px solid var(--bg); }
+
+    .dim-read { font-size: 0.85rem; color: var(--ink); line-height: 1.6; margin-bottom: 0.75rem; }
+    .dim-move-label { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.2rem; }
+    .dim-move { font-size: 0.84rem; color: var(--ink); line-height: 1.55; }
+
+    /* METHOD / ABOUT */
+    .method {
+      background: var(--card); border: 1px solid var(--line); border-radius: 4px;
+      padding: 1.5rem 1.7rem; margin-top: 1rem;
+    }
+    .method h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.9rem; }
+    .method p { font-size: 0.9rem; color: var(--muted); line-height: 1.66; margin-bottom: 0.7rem; }
+    .method p:last-child { margin-bottom: 0; }
+    .method strong { color: var(--ink); font-weight: 600; }
+
+    /* COMPANY SNAPSHOT (per demo client) */
+    .snapshot {
+      background: linear-gradient(135deg, #0e1116 0%, #0d0f0e 100%);
+      border: 1px solid var(--line); border-left: 3px solid var(--teal);
+      border-radius: 4px; padding: 1.4rem 1.7rem; margin-bottom: 1.7rem;
+      opacity: 0; max-height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0;
+      transition: opacity 0.3s ease, max-height 0.35s ease, padding 0.35s ease;
+    }
+    .snapshot.show { opacity: 1; max-height: 420px; padding-top: 1.4rem; padding-bottom: 1.4rem; }
+    .snapshot-sector { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--teal); font-weight: 700; margin-bottom: 0.3rem; }
+    .snapshot-name { font-family: var(--serif); font-size: 1.3rem; color: var(--white); font-weight: 600; margin-bottom: 0.7rem; }
+    .snapshot-story { font-size: 0.96rem; color: var(--ink); line-height: 1.66; margin-bottom: 1rem; }
+    .snapshot-tags { display: flex; flex-wrap: wrap; gap: 2rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
+    .snapshot-tag .lab { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); display: block; margin-bottom: 0.15rem; }
+    .snapshot-tag .val { font-size: 0.92rem; font-weight: 600; }
+    .snapshot-tag.strength .val { color: var(--operating); }
+    .snapshot-tag.gap .val { color: var(--experiment); }
+
+    /* DIMENSION STRENGTH / GAP ACCENTS */
+    .dim-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem; }
+    .dim-badge {
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.2em 0.55em; border-radius: 2px; white-space: nowrap; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.25s ease;
+    }
+    .dim-badge.show { opacity: 1; }
+    .dim-badge.strength { background: rgba(76,175,106,0.15); color: var(--operating); border: 1px solid rgba(76,175,106,0.35); }
+    .dim-badge.gap { background: rgba(212,149,74,0.15); color: var(--experiment); border: 1px solid rgba(212,149,74,0.35); }
+    .dim-card.is-strength { border-color: rgba(76,175,106,0.4); }
+    .dim-card.is-gap { border-color: rgba(212,149,74,0.45); }
+    .dim-badge.mid { background: rgba(164,160,154,0.12); color: var(--muted); border: 1px solid rgba(164,160,154,0.32); }
+    .dim-card.is-mid { border-color: rgba(164,160,154,0.22); }
+    .dim-card { transition: border-color 0.25s; }
+
+    /* NEXT-MOVE block — color tracks the slider level */
+    .dim-move-block { border-left: 2px solid var(--line); padding-left: 0.75rem; margin-top: 0.15rem; transition: border-color 0.25s; }
+    .dim-move-label { transition: color 0.25s; }
+    .level-value, .level-stage, .level-bar-fill { transition: color 0.25s, width 0.3s ease, background 0.25s; }
+
+    /* MATURITY COLOR LEGEND */
+    .maturity-legend { display: flex; flex-wrap: wrap; gap: 0.7rem 1.1rem; margin: 0.3rem 0 1.6rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--faint); }
+    footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
+    footer a:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <h1>AI Adoption <span>Readiness</span></h1>
+    <p class="tagline">A diagnostic for leaders deciding whether their organization is actually ready to deploy AI agents — not whether the technology works, but whether the org will.</p>
+    <div class="meta-row">
+      <span class="meta-tag">Interactive diagnostic</span>
+      <span class="meta-tag demo" id="mode-tag">Demo data loaded</span>
+    </div>
+  </header>
+
+  <div class="callout">
+    <div class="callout-label">How to read this</div>
+    <p>
+      Most AI initiatives don't fail on the model — they fail on <strong>adoption</strong>: no clear owner, no scoped use case,
+      no governance, no plan for making the change stick. This tool scores readiness across <strong>six dimensions</strong>,
+      surfaces your weakest link, and names the single highest-leverage next move. <strong>Load a demo company below</strong>
+      to see it work, then move the sliders to model your own.
+    </p>
+  </div>
+
+  <div class="preset-label">Start with a demo — or score your own</div>
+  <div class="preset-row" id="preset-row"><!-- buttons injected --></div>
+
+  <!-- COMPANY SNAPSHOT (per demo client) -->
+  <div class="snapshot" id="snapshot">
+    <div class="snapshot-sector" id="snap-sector"></div>
+    <div class="snapshot-name" id="snap-name"></div>
+    <div class="snapshot-story" id="snap-story"></div>
+    <div class="snapshot-tags">
+      <div class="snapshot-tag strength"><span class="lab">Strongest dimension</span><span class="val" id="snap-strength"></span></div>
+      <div class="snapshot-tag gap"><span class="lab">Critical gap</span><span class="val" id="snap-gap"></span></div>
+    </div>
+  </div>
+
+  <!-- OVERALL READINESS -->
+  <div class="score-banner">
+    <div class="score-number" id="overall-display">—</div>
+    <div class="score-detail">
+      <div class="band-name" id="band-name">—</div>
+      <div class="band-stage" id="band-stage"></div>
+      <div class="score-bar-wrap"><div class="score-bar-fill" id="overall-bar" style="width:0%"></div></div>
+      <div class="score-scale">
+        <span>Foundation</span><span>Experimenting</span><span>Scaling</span><span>Operating</span>
+      </div>
+    </div>
+    <button class="reset-btn" id="reset-btn">Clear / score my own</button>
+  </div>
+  <p class="score-note">Readiness = average across six dimensions, 1–5. Move any slider to model a scenario. Your session persists on this device only.</p>
+
+  <!-- RECOMMENDATION -->
+  <div class="rec-panel">
+    <div class="rec-label">Where to start</div>
+    <div class="rec-headline" id="rec-headline">—</div>
+    <div class="rec-move" id="rec-move">—</div>
+  </div>
+
+  <!-- DIMENSIONS -->
+  <div class="section-title">The six dimensions</div>
+  <div class="maturity-legend" id="maturity-legend"><!-- injected --></div>
+  <hr class="section-divider">
+  <div class="dim-grid" id="dim-grid"><!-- cards injected --></div>
+
+  <!-- METHOD / ABOUT -->
+  <div class="section-title" style="padding-top:1.5rem;">About this instrument</div>
+  <hr class="section-divider">
+  <div class="method">
+    <p>
+      <strong>What it is.</strong> A readiness diagnostic I designed to make a hard question concrete: is an organization ready to
+      adopt AI agents, or will the rollout stall? The six dimensions map to established change-management thinking
+      (sponsorship, capability, reinforcement) applied to the specific problem of deploying autonomous and semi-autonomous AI.
+    </p>
+    <p>
+      <strong>What the demo data is.</strong> The example companies are <strong>fictional, illustrative profiles</strong> — built to
+      show how the scoring behaves across different maturity shapes, not records of real engagements.
+    </p>
+    <p>
+      <strong>Why I built it.</strong> I spent 27 years running operations on the road for live productions — the work of
+      getting people, systems, and a plan to actually hold up under pressure. This tool applies that operator's lens to AI
+      adoption. The scoring logic is deterministic and runs entirely in your browser; there is no backend and nothing is collected.
+    </p>
+  </div>
+
+  <footer>
+    AI Adoption Readiness — a diagnostic by Rose Laguana.
+    Companion to the private AI Builder Literacy scorecard (same engine, organization-facing lens).
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ============================================================
+   DATA — six readiness dimensions, five maturity levels each
+============================================================ */
+const STORAGE_KEY = "ai-adoption-readiness-v1";
+
+const STAGE_LABELS = ["", "Nascent", "Exploring", "Developing", "Scaling", "Embedded"];
+// Maturity ramp: where this dimension stands, 1 (foundation) → 5 (embedded)
+const LEVEL_COLORS = ["", "#c0563f", "#d4954a", "#c8a951", "#4ba8a0", "#4caf6a"];
+
+const DIMENSIONS = [
+  {
+    id: "leadership",
+    name: "Leadership & Sponsorship",
+    measures: "Is a named executive accountable for AI adoption, with budget and a mandate?",
+    levels: [
+      null,
+      { read: "No executive owns AI; interest is individual and bottom-up.", move: "Name a single accountable executive sponsor before any pilot — adoption without an owner stalls." },
+      { read: "A leader is curious, but there's no budget and no mandate.", move: "Convert curiosity into a funded 90-day mandate with one success metric attached." },
+      { read: "A sponsor exists with pilot budget, but AI isn't an org-wide priority.", move: "Tie the AI goal to a top-3 company objective so it survives competing priorities." },
+      { read: "Leadership actively champions AI and clears blockers.", move: "Stand up a cross-functional steering group so momentum doesn't depend on one champion." },
+      { read: "AI is a standing leadership agenda item with sustained investment.", move: "Protect the investment through the next budget cycle and any leadership change." }
+    ]
+  },
+  {
+    id: "usecase",
+    name: "Use-Case Clarity",
+    measures: "Does the org know which problems to point AI at — and why those?",
+    levels: [
+      null,
+      { read: "AI is a solution looking for a problem; no prioritized use cases.", move: "Run a toil audit — list the 10 most repetitive workflows before choosing any tool." },
+      { read: "A long wish-list exists, but nothing is scoped or sized.", move: "Score candidates by value × feasibility; pick one wedge with a clear owner." },
+      { read: "One or two use cases are scoped, with owners and success metrics.", move: "Ship the first to production — real users and real data, not just a demo." },
+      { read: "Multiple use cases are live; the next ones are ranked in a pipeline.", move: "Standardize how new use cases get proposed, scored, and resourced." },
+      { read: "Use-case selection is a repeatable, governed process.", move: "Sunset low-value automations as fast as you add new ones." }
+    ]
+  },
+  {
+    id: "data",
+    name: "Data & Tooling Foundation",
+    measures: "Can data access, integrations, and infrastructure actually support agents?",
+    levels: [
+      null,
+      { read: "Data is siloed and manual; there's no integration layer.", move: "Map where the data agents would need actually lives before promising outcomes." },
+      { read: "Some systems are reachable, but access is ad hoc and ungoverned.", move: "Establish secure, permissioned access to the 2–3 systems your first use case needs." },
+      { read: "Core systems are integrable and a sanctioned platform exists.", move: "Consolidate onto a primary platform to avoid a sprawl of one-off tools." },
+      { read: "Agents have governed, reliable access to the data they need.", move: "Add monitoring so data and integration failures surface before users feel them." },
+      { read: "A managed, observable agent platform is the default substrate.", move: "Treat the platform as a product — with an owner and a roadmap." }
+    ]
+  },
+  {
+    id: "workforce",
+    name: "Workforce Capability & Literacy",
+    measures: "Can the people — not just leadership — work alongside agents?",
+    levels: [
+      null,
+      { read: "AI literacy is rare and concentrated in a few enthusiasts.", move: "Baseline literacy — give every affected team a shared vocabulary and a hands-on session." },
+      { read: "Pockets of skill exist; most staff are anxious or unaware.", move: "Name and resource internal champions per team — adoption travels through peers." },
+      { read: "Affected teams have working literacy; champions are in place.", move: "Move from 'how to use it' to 'how to judge its output' — build evaluation habits." },
+      { read: "Teams fluently delegate to and supervise agents.", move: "Capture what good supervision looks like as reusable playbooks." },
+      { read: "Working with agents is an expected, trained competency.", move: "Fold AI fluency into onboarding and role expectations." }
+    ]
+  },
+  {
+    id: "governance",
+    name: "Governance, Risk & Trust",
+    measures: "Do autonomy boundaries, review, and safety let people trust the system?",
+    levels: [
+      null,
+      { read: "No policy; usage is shadow and unsanctioned, with real exposure.", move: "Publish a one-page acceptable-use and data policy before scaling anything." },
+      { read: "Basic rules exist, but boundaries and review are unclear.", move: "Define autonomy boundaries — what agents may do alone vs. with a human in the loop." },
+      { read: "Clear boundaries and human-in-the-loop checkpoints are in place.", move: "Add an audit trail so decisions are reviewable, not merely permitted." },
+      { read: "Decisions are logged, reviewable, and risk-tiered.", move: "Run periodic red-team and eval reviews; raise autonomy where trust is earned." },
+      { read: "Governance is proactive, measured, and trusted by users.", move: "Keep governance light enough that it enables rather than blocks." }
+    ]
+  },
+  {
+    id: "change",
+    name: "Change Capacity & Adoption",
+    measures: "Will the change stick — the difference between a pilot and a habit?",
+    levels: [
+      null,
+      { read: "Past changes stall; there's no method for driving adoption.", move: "Treat this as a change program, not an IT rollout — define success for people, not just systems." },
+      { read: "Tools get deployed, but usage decays after launch.", move: "Measure active usage, not deployment; design for the dip after the novelty fades." },
+      { read: "Adoption is tracked; some workflows have genuinely changed.", move: "Reinforce — tie new behaviors to recognition and remove the old path." },
+      { read: "New ways of working are becoming the default.", move: "Document the before/after so wins are legible to skeptics and the next team." },
+      { read: "AI-augmented work is simply 'how we work' now.", move: "Keep listening for friction — the embedded stage still erodes without care." }
+    ]
+  }
+];
+
+/* Readiness bands keyed off the overall average */
+const BANDS = [
+  { max: 1.99, name: "Foundation Stage", stage: "Not yet ready", color: "var(--foundation)",
+    headline: "You're at the foundation stage. Deploying agents now would likely stall or create avoidable risk — the base has to come first. The goal right now is not a pilot; it's the conditions that let a pilot succeed." },
+  { max: 2.99, name: "Experimenting", stage: "Pilot stage", color: "var(--experiment)",
+    headline: "You're ready to pilot, not to scale. Pick one well-scoped wedge, prove it with real users, and learn — resist the pull to roll out broadly before a single use case has earned it." },
+  { max: 3.99, name: "Scaling", stage: "Rollout stage", color: "var(--scaling)",
+    headline: "You have real momentum. The risk now is uneven maturity — your weakest dimension will quietly cap everything the strong ones can do. Level the laggard before adding new use cases." },
+  { max: 5.01, name: "Operating", stage: "Embedded stage", color: "var(--operating)",
+    headline: "You're operating AI as a genuine capability, not a project. Protect it: the embedded stage erodes without ongoing governance and reinforcement. Maintenance is the work now." }
+];
+
+/* Demo companies — FICTIONAL illustrative profiles (label, sublabel, levels) */
+const PRESETS = [
+  {
+    id: "clinic", label: "Meridian Clinic Network", sub: "Regional healthcare · compliance-heavy",
+    sector: "Regional healthcare · compliance-heavy",
+    story: "A regional network of clinics with genuine executive interest and a strong compliance backbone — but patient data is locked in legacy systems and frontline staff are anxious and under-trained. Curious at the top; not yet ready on the ground.",
+    levels: { leadership: 3, usecase: 2, data: 2, workforce: 2, governance: 3, change: 2 }
+  },
+  {
+    id: "saas", label: "Northwind", sub: "Series B B2B SaaS · tech-forward",
+    sector: "Series B B2B SaaS · tech-forward",
+    story: "A fast-moving B2B SaaS company with strong engineering, clearly scoped use cases, and the data plumbing to match. They're shipping AI features quickly — and their governance hasn't kept pace with how fast they're moving.",
+    levels: { leadership: 4, usecase: 4, data: 4, workforce: 3, governance: 2, change: 3 }
+  },
+  {
+    id: "touring", label: "Atlas Touring Co.", sub: "Live entertainment · ops-heavy",
+    sector: "Live entertainment · ops-heavy",
+    story: "A touring production company full of disciplined operators who execute change brilliantly under pressure. The crew adapts fast — but there's no executive AI sponsor and almost no data infrastructure beneath them. The people are ready before the systems are.",
+    levels: { leadership: 2, usecase: 3, data: 2, workforce: 2, governance: 2, change: 4 }
+  }
+];
+
+/* ============================================================
+   STATE
+============================================================ */
+function loadState() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) return JSON.parse(raw); } catch (_) {}
+  return null;
+}
+function saveState(levels, presetId) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ levels, presetId, savedAt: new Date().toISOString() }));
+}
+function presetLevels(id) {
+  const p = PRESETS.find(x => x.id === id);
+  return p ? { ...p.levels } : null;
+}
+function blankLevels() {
+  const l = {}; DIMENSIONS.forEach(d => l[d.id] = 3); return l;
+}
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function pct(v, min, max) { return Math.round(((v - min) / (max - min)) * 100); }
+function bandFor(avg) { return BANDS.find(b => avg <= b.max) || BANDS[BANDS.length - 1]; }
+function weakestDim(levels) {
+  let lowId = DIMENSIONS[0].id, lowVal = 99;
+  DIMENSIONS.forEach(d => { if (levels[d.id] < lowVal) { lowVal = levels[d.id]; lowId = d.id; } });
+  return DIMENSIONS.find(d => d.id === lowId);
+}
+function strongestDim(levels) {
+  let hiId = DIMENSIONS[0].id, hiVal = -1;
+  DIMENSIONS.forEach(d => { if (levels[d.id] > hiVal) { hiVal = levels[d.id]; hiId = d.id; } });
+  return DIMENSIONS.find(d => d.id === hiId);
+}
+
+/* Live strength / gap badges on the dimension cards */
+function updateAccents(levels) {
+  const vals = DIMENSIONS.map(d => levels[d.id]);
+  const max = Math.max(...vals), min = Math.min(...vals);
+  const flat = max === min;
+  DIMENSIONS.forEach(d => {
+    const lvl = levels[d.id];
+    const card = document.getElementById(`card-${d.id}`);
+    const badge = document.getElementById(`badge-${d.id}`);
+    if (!card || !badge) return;
+    card.classList.remove("is-strength", "is-gap", "is-mid");
+    badge.classList.remove("show", "strength", "gap", "mid");
+    if (flat || (lvl !== max && lvl !== min)) {
+      card.classList.add("is-mid"); badge.classList.add("show", "mid"); badge.textContent = "◆ Mid-range";
+    } else if (lvl === max) {
+      card.classList.add("is-strength"); badge.classList.add("show", "strength"); badge.textContent = "▲ Strength";
+    } else {
+      card.classList.add("is-gap"); badge.classList.add("show", "gap"); badge.textContent = "▼ Critical gap";
+    }
+  });
+}
+
+/* Company snapshot — shows the story + connects strength/gap to the cards */
+function renderSnapshot(presetId, levels) {
+  const snap = document.getElementById("snapshot");
+  const preset = presetId ? PRESETS.find(p => p.id === presetId) : null;
+  if (!preset) { snap.classList.remove("show"); return; }
+  document.getElementById("snap-sector").textContent = preset.sector;
+  document.getElementById("snap-name").textContent = preset.label;
+  document.getElementById("snap-story").textContent = preset.story;
+  document.getElementById("snap-strength").textContent = strongestDim(levels).name;
+  document.getElementById("snap-gap").textContent = weakestDim(levels).name;
+  snap.classList.add("show");
+}
+
+/* ============================================================
+   RENDER — overall + recommendation
+============================================================ */
+function updateOverall(levels) {
+  const vals = DIMENSIONS.map(d => levels[d.id]);
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const rounded = Math.round(avg * 10) / 10;
+  const band = bandFor(avg);
+
+  document.getElementById("overall-display").textContent = rounded.toFixed(1);
+  document.getElementById("overall-bar").style.width = pct(rounded, 1, 5) + "%";
+  document.getElementById("overall-bar").style.background = band.color;
+  document.getElementById("band-name").textContent = band.name;
+  const stageEl = document.getElementById("band-stage");
+  stageEl.textContent = band.stage;
+  stageEl.style.color = band.color;
+
+  // recommendation: band headline + weakest-dimension's level-specific move
+  const weak = weakestDim(levels);
+  const weakLevel = levels[weak.id];
+  document.getElementById("rec-headline").textContent = band.headline;
+  document.getElementById("rec-move").innerHTML =
+    `<strong>Your highest-leverage move is in ${weak.name}</strong> (currently ${weakLevel}/5 — ${STAGE_LABELS[weakLevel]}): ${weak.levels[weakLevel].move}`;
+
+  updateAccents(levels);
+}
+
+/* ============================================================
+   RENDER — dimension cards
+============================================================ */
+function buildDimCard(dim, level) {
+  const card = document.createElement("div");
+  card.className = "dim-card";
+  card.id = `card-${dim.id}`;
+  card.innerHTML = `
+    <div class="dim-head">
+      <div class="dim-name">${dim.name}</div>
+      <span class="dim-badge" id="badge-${dim.id}"></span>
+    </div>
+    <div class="dim-measures">${dim.measures}</div>
+    <div class="level-bar-wrap">
+      <div class="level-bar-track"><div class="level-bar-fill" id="bar-${dim.id}" style="width:${pct(level,1,5)}%"></div></div>
+      <div class="level-value" id="val-${dim.id}">${level}</div>
+    </div>
+    <div class="level-stage" id="stage-${dim.id}">${STAGE_LABELS[level]}</div>
+    <div class="level-controls">
+      <button class="adj-btn" data-id="${dim.id}" data-delta="-1" aria-label="Decrease">&#8722;</button>
+      <input type="range" class="level-slider" id="slider-${dim.id}" min="1" max="5" step="1" value="${level}" data-id="${dim.id}" aria-label="${dim.name} level">
+      <button class="adj-btn" data-id="${dim.id}" data-delta="1" aria-label="Increase">+</button>
+    </div>
+    <div class="dim-read" id="read-${dim.id}">${dim.levels[level].read}</div>
+    <div class="dim-move-block" id="moveblock-${dim.id}">
+      <div class="dim-move-label" id="movelabel-${dim.id}">Next move — toward ${STAGE_LABELS[Math.min(level + 1, 5)]}</div>
+      <div class="dim-move" id="move-${dim.id}">${dim.levels[level].move}</div>
+    </div>
+  `;
+  return card;
+}
+
+function refreshDim(dim, level) {
+  const color = LEVEL_COLORS[level];
+
+  const bar = document.getElementById(`bar-${dim.id}`);
+  bar.style.width = pct(level, 1, 5) + "%";
+  bar.style.background = color;
+
+  const val = document.getElementById(`val-${dim.id}`);
+  val.textContent = level;
+  val.style.color = color;
+
+  const stage = document.getElementById(`stage-${dim.id}`);
+  stage.textContent = `${STAGE_LABELS[level]} · level ${level} of 5`;
+  stage.style.color = color;
+
+  document.getElementById(`read-${dim.id}`).textContent = dim.levels[level].read;
+  document.getElementById(`move-${dim.id}`).textContent = dim.levels[level].move;
+
+  // Next-move block color tracks the slider; label points at the next stage up
+  const block = document.getElementById(`moveblock-${dim.id}`);
+  const label = document.getElementById(`movelabel-${dim.id}`);
+  if (level >= 5) {
+    block.style.borderLeftColor = LEVEL_COLORS[5];
+    label.textContent = "Hold the gain — Embedded";
+    label.style.color = LEVEL_COLORS[5];
+  } else {
+    const nextColor = LEVEL_COLORS[level + 1];
+    block.style.borderLeftColor = nextColor;
+    label.textContent = `Next move — toward ${STAGE_LABELS[level + 1]}`;
+    label.style.color = nextColor;
+  }
+
+  // Slider thumb color = current maturity
+  const slider = document.getElementById(`slider-${dim.id}`);
+  if (slider) slider.style.setProperty("--thumb", color);
+}
+
+/* ============================================================
+   PRESET BAR
+============================================================ */
+function buildPresets(onPick) {
+  const row = document.getElementById("preset-row");
+  PRESETS.forEach(p => {
+    const btn = document.createElement("button");
+    btn.className = "preset-btn";
+    btn.dataset.id = p.id;
+    btn.innerHTML = `${p.label}<small>${p.sub}</small>`;
+    btn.addEventListener("click", () => onPick(p.id));
+    row.appendChild(btn);
+  });
+}
+function markActivePreset(id) {
+  document.querySelectorAll(".preset-btn").forEach(b => b.classList.toggle("active", b.dataset.id === id));
+  const tag = document.getElementById("mode-tag");
+  if (id) { tag.textContent = "Demo data loaded"; tag.style.display = ""; }
+  else { tag.textContent = "Your scenario"; }
+}
+
+/* ============================================================
+   APPLY a full set of levels to the UI
+============================================================ */
+let LEVELS = {};
+function applyLevels(levels, presetId) {
+  LEVELS = { ...levels };
+  DIMENSIONS.forEach(dim => {
+    const slider = document.getElementById(`slider-${dim.id}`);
+    if (slider) slider.value = LEVELS[dim.id];
+    refreshDim(dim, LEVELS[dim.id]);
+  });
+  updateOverall(LEVELS);
+  renderSnapshot(presetId || null, LEVELS);
+  markActivePreset(presetId || null);
+  saveState(LEVELS, presetId || null);
+}
+
+/* ============================================================
+   WIRE controls
+============================================================ */
+function wire() {
+  document.querySelectorAll(".level-slider").forEach(slider => {
+    slider.addEventListener("input", function () {
+      const id = this.dataset.id, val = parseInt(this.value, 10);
+      LEVELS[id] = val;
+      refreshDim(DIMENSIONS.find(d => d.id === id), val);
+      updateOverall(LEVELS);
+      renderSnapshot(null, LEVELS);
+      markActivePreset(null);
+      saveState(LEVELS, null);
+    });
+  });
+  document.querySelectorAll(".adj-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id, delta = parseInt(this.dataset.delta, 10);
+      let val = Math.min(5, Math.max(1, LEVELS[id] + delta));
+      LEVELS[id] = val;
+      document.getElementById(`slider-${id}`).value = val;
+      refreshDim(DIMENSIONS.find(d => d.id === id), val);
+      updateOverall(LEVELS);
+      renderSnapshot(null, LEVELS);
+      markActivePreset(null);
+      saveState(LEVELS, null);
+    });
+  });
+  document.getElementById("reset-btn").addEventListener("click", () => applyLevels(blankLevels(), null));
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+function buildLegend() {
+  const row = document.getElementById("maturity-legend");
+  for (let i = 1; i <= 5; i++) {
+    const item = document.createElement("span");
+    item.className = "legend-item";
+    item.innerHTML = `<span class="legend-dot" style="background:${LEVEL_COLORS[i]}"></span>${i} ${STAGE_LABELS[i]}`;
+    row.appendChild(item);
+  }
+}
+
+function init() {
+  const dimGrid = document.getElementById("dim-grid");
+  DIMENSIONS.forEach(dim => dimGrid.appendChild(buildDimCard(dim, 3)));
+  buildLegend();
+  buildPresets(id => applyLevels(presetLevels(id), id));
+  wire();
+
+  const stored = loadState();
+  if (stored && stored.levels) {
+    DIMENSIONS.forEach(d => { if (stored.levels[d.id] === undefined) stored.levels[d.id] = 3; });
+    applyLevels(stored.levels, stored.presetId || null);
+  } else {
+    // first visit: lead with the SaaS demo so the tool is alive on open
+    applyLevels(presetLevels("saas"), "saas");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
