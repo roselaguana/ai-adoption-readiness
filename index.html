@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Adoption Readiness — a diagnostic by Rose Laguana</title>
+  <title>AI Adoption Readiness · a diagnostic by Rose Laguana</title>
 
   <style>
     /* ======================================================
-       DESIGN TOKENS — matches portfolio-site / literacy scorecard
+       DESIGN TOKENS: matches portfolio-site / literacy scorecard
     ====================================================== */
     :root {
       --bg:          #0b0b0c;
@@ -277,7 +277,7 @@
     .dim-card.is-mid { border-color: rgba(164,160,154,0.22); }
     .dim-card { transition: border-color 0.25s; }
 
-    /* NEXT-MOVE block — color tracks the slider level */
+    /* NEXT-MOVE block: color tracks the slider level */
     .dim-move-block { border-left: 2px solid var(--line); padding-left: 0.75rem; margin-top: 0.15rem; transition: border-color 0.25s; }
     .dim-move-label { transition: color 0.25s; }
     .level-value, .level-stage, .level-bar-fill { transition: color 0.25s, width 0.3s ease, background 0.25s; }
@@ -298,7 +298,7 @@
 
   <header>
     <h1>AI Adoption <span>Readiness</span></h1>
-    <p class="tagline">A diagnostic for leaders deciding whether their organization is actually ready to deploy AI agents — not whether the technology works, but whether the org will.</p>
+    <p class="tagline">A diagnostic for leaders deciding whether their organization is actually ready to deploy AI agents: not whether the technology works, but whether the org will.</p>
     <div class="meta-row">
       <span class="meta-tag">Interactive diagnostic</span>
       <span class="meta-tag demo" id="mode-tag">Demo data loaded</span>
@@ -308,14 +308,14 @@
   <div class="callout">
     <div class="callout-label">How to read this</div>
     <p>
-      Most AI initiatives don't fail on the model — they fail on <strong>adoption</strong>: no clear owner, no scoped use case,
+      Most AI initiatives don't fail on the model; they fail on <strong>adoption</strong>: no clear owner, no scoped use case,
       no governance, no plan for making the change stick. This tool scores readiness across <strong>six dimensions</strong>,
       surfaces your weakest link, and names the single highest-leverage next move. <strong>Load a demo company below</strong>
       to see it work, then move the sliders to model your own.
     </p>
   </div>
 
-  <div class="preset-label">Start with a demo — or score your own</div>
+  <div class="preset-label">Start with a demo, or score your own</div>
   <div class="preset-row" id="preset-row"><!-- buttons injected --></div>
 
   <!-- COMPANY SNAPSHOT (per demo client) -->
@@ -331,9 +331,9 @@
 
   <!-- OVERALL READINESS -->
   <div class="score-banner">
-    <div class="score-number" id="overall-display">—</div>
+    <div class="score-number" id="overall-display">–</div>
     <div class="score-detail">
-      <div class="band-name" id="band-name">—</div>
+      <div class="band-name" id="band-name">–</div>
       <div class="band-stage" id="band-stage"></div>
       <div class="score-bar-wrap"><div class="score-bar-fill" id="overall-bar" style="width:0%"></div></div>
       <div class="score-scale">
@@ -347,8 +347,8 @@
   <!-- RECOMMENDATION -->
   <div class="rec-panel">
     <div class="rec-label">Where to start</div>
-    <div class="rec-headline" id="rec-headline">—</div>
-    <div class="rec-move" id="rec-move">—</div>
+    <div class="rec-headline" id="rec-headline">–</div>
+    <div class="rec-move" id="rec-move">–</div>
   </div>
 
   <!-- DIMENSIONS -->
@@ -367,18 +367,18 @@
       (sponsorship, capability, reinforcement) applied to the specific problem of deploying autonomous and semi-autonomous AI.
     </p>
     <p>
-      <strong>What the demo data is.</strong> The example companies are <strong>fictional, illustrative profiles</strong> — built to
+      <strong>What the demo data is.</strong> The example companies are <strong>fictional, illustrative profiles</strong>, built to
       show how the scoring behaves across different maturity shapes, not records of real engagements.
     </p>
     <p>
-      <strong>Why I built it.</strong> I spent 27 years running operations on the road for live productions — the work of
+      <strong>Why I built it.</strong> I spent 27 years running operations on the road for live productions: the work of
       getting people, systems, and a plan to actually hold up under pressure. This tool applies that operator's lens to AI
       adoption. The scoring logic is deterministic and runs entirely in your browser; there is no backend and nothing is collected.
     </p>
   </div>
 
   <footer>
-    AI Adoption Readiness — a diagnostic by Rose Laguana.
+    AI Adoption Readiness · a diagnostic by Rose Laguana.
     Companion to the private AI Builder Literacy scorecard (same engine, organization-facing lens).
   </footer>
 
@@ -386,7 +386,7 @@
 
 <script>
 /* ============================================================
-   DATA — six readiness dimensions, five maturity levels each
+   DATA: six readiness dimensions, five maturity levels each
 ============================================================ */
 const STORAGE_KEY = "ai-adoption-readiness-v1";
 
@@ -401,7 +401,7 @@ const DIMENSIONS = [
     measures: "Is a named executive accountable for AI adoption, with budget and a mandate?",
     levels: [
       null,
-      { read: "No executive owns AI; interest is individual and bottom-up.", move: "Name a single accountable executive sponsor before any pilot — adoption without an owner stalls." },
+      { read: "No executive owns AI; interest is individual and bottom-up.", move: "Name a single accountable executive sponsor before any pilot; adoption without an owner stalls." },
       { read: "A leader is curious, but there's no budget and no mandate.", move: "Convert curiosity into a funded 90-day mandate with one success metric attached." },
       { read: "A sponsor exists with pilot budget, but AI isn't an org-wide priority.", move: "Tie the AI goal to a top-3 company objective so it survives competing priorities." },
       { read: "Leadership actively champions AI and clears blockers.", move: "Stand up a cross-functional steering group so momentum doesn't depend on one champion." },
@@ -411,12 +411,12 @@ const DIMENSIONS = [
   {
     id: "usecase",
     name: "Use-Case Clarity",
-    measures: "Does the org know which problems to point AI at — and why those?",
+    measures: "Does the org know which problems to point AI at, and why those?",
     levels: [
       null,
-      { read: "AI is a solution looking for a problem; no prioritized use cases.", move: "Run a toil audit — list the 10 most repetitive workflows before choosing any tool." },
+      { read: "AI is a solution looking for a problem; no prioritized use cases.", move: "Run a toil audit: list the 10 most repetitive workflows before choosing any tool." },
       { read: "A long wish-list exists, but nothing is scoped or sized.", move: "Score candidates by value × feasibility; pick one wedge with a clear owner." },
-      { read: "One or two use cases are scoped, with owners and success metrics.", move: "Ship the first to production — real users and real data, not just a demo." },
+      { read: "One or two use cases are scoped, with owners and success metrics.", move: "Ship the first to production with real users and real data, not just a demo." },
       { read: "Multiple use cases are live; the next ones are ranked in a pipeline.", move: "Standardize how new use cases get proposed, scored, and resourced." },
       { read: "Use-case selection is a repeatable, governed process.", move: "Sunset low-value automations as fast as you add new ones." }
     ]
@@ -431,18 +431,18 @@ const DIMENSIONS = [
       { read: "Some systems are reachable, but access is ad hoc and ungoverned.", move: "Establish secure, permissioned access to the 2–3 systems your first use case needs." },
       { read: "Core systems are integrable and a sanctioned platform exists.", move: "Consolidate onto a primary platform to avoid a sprawl of one-off tools." },
       { read: "Agents have governed, reliable access to the data they need.", move: "Add monitoring so data and integration failures surface before users feel them." },
-      { read: "A managed, observable agent platform is the default substrate.", move: "Treat the platform as a product — with an owner and a roadmap." }
+      { read: "A managed, observable agent platform is the default substrate.", move: "Treat the platform as a product, with an owner and a roadmap." }
     ]
   },
   {
     id: "workforce",
     name: "Workforce Capability & Literacy",
-    measures: "Can the people — not just leadership — work alongside agents?",
+    measures: "Can the people, not just leadership, work alongside agents?",
     levels: [
       null,
-      { read: "AI literacy is rare and concentrated in a few enthusiasts.", move: "Baseline literacy — give every affected team a shared vocabulary and a hands-on session." },
-      { read: "Pockets of skill exist; most staff are anxious or unaware.", move: "Name and resource internal champions per team — adoption travels through peers." },
-      { read: "Affected teams have working literacy; champions are in place.", move: "Move from 'how to use it' to 'how to judge its output' — build evaluation habits." },
+      { read: "AI literacy is rare and concentrated in a few enthusiasts.", move: "Baseline literacy: give every affected team a shared vocabulary and a hands-on session." },
+      { read: "Pockets of skill exist; most staff are anxious or unaware.", move: "Name and resource internal champions per team; adoption travels through peers." },
+      { read: "Affected teams have working literacy; champions are in place.", move: "Move from 'how to use it' to 'how to judge its output': build evaluation habits." },
       { read: "Teams fluently delegate to and supervise agents.", move: "Capture what good supervision looks like as reusable playbooks." },
       { read: "Working with agents is an expected, trained competency.", move: "Fold AI fluency into onboarding and role expectations." }
     ]
@@ -454,7 +454,7 @@ const DIMENSIONS = [
     levels: [
       null,
       { read: "No policy; usage is shadow and unsanctioned, with real exposure.", move: "Publish a one-page acceptable-use and data policy before scaling anything." },
-      { read: "Basic rules exist, but boundaries and review are unclear.", move: "Define autonomy boundaries — what agents may do alone vs. with a human in the loop." },
+      { read: "Basic rules exist, but boundaries and review are unclear.", move: "Define autonomy boundaries: what agents may do alone vs. with a human in the loop." },
       { read: "Clear boundaries and human-in-the-loop checkpoints are in place.", move: "Add an audit trail so decisions are reviewable, not merely permitted." },
       { read: "Decisions are logged, reviewable, and risk-tiered.", move: "Run periodic red-team and eval reviews; raise autonomy where trust is earned." },
       { read: "Governance is proactive, measured, and trusted by users.", move: "Keep governance light enough that it enables rather than blocks." }
@@ -463,14 +463,14 @@ const DIMENSIONS = [
   {
     id: "change",
     name: "Change Capacity & Adoption",
-    measures: "Will the change stick — the difference between a pilot and a habit?",
+    measures: "Will the change stick? The difference between a pilot and a habit.",
     levels: [
       null,
-      { read: "Past changes stall; there's no method for driving adoption.", move: "Treat this as a change program, not an IT rollout — define success for people, not just systems." },
+      { read: "Past changes stall; there's no method for driving adoption.", move: "Treat this as a change program, not an IT rollout: define success for people, not just systems." },
       { read: "Tools get deployed, but usage decays after launch.", move: "Measure active usage, not deployment; design for the dip after the novelty fades." },
-      { read: "Adoption is tracked; some workflows have genuinely changed.", move: "Reinforce — tie new behaviors to recognition and remove the old path." },
+      { read: "Adoption is tracked; some workflows have genuinely changed.", move: "Reinforce: tie new behaviors to recognition and remove the old path." },
       { read: "New ways of working are becoming the default.", move: "Document the before/after so wins are legible to skeptics and the next team." },
-      { read: "AI-augmented work is simply 'how we work' now.", move: "Keep listening for friction — the embedded stage still erodes without care." }
+      { read: "AI-augmented work is simply 'how we work' now.", move: "Keep listening for friction; the embedded stage still erodes without care." }
     ]
   }
 ];
@@ -478,33 +478,33 @@ const DIMENSIONS = [
 /* Readiness bands keyed off the overall average */
 const BANDS = [
   { max: 1.99, name: "Foundation Stage", stage: "Not yet ready", color: "var(--foundation)",
-    headline: "You're at the foundation stage. Deploying agents now would likely stall or create avoidable risk — the base has to come first. The goal right now is not a pilot; it's the conditions that let a pilot succeed." },
+    headline: "You're at the foundation stage. Deploying agents now would likely stall or create avoidable risk; the base has to come first. The goal right now is not a pilot; it's the conditions that let a pilot succeed." },
   { max: 2.99, name: "Experimenting", stage: "Pilot stage", color: "var(--experiment)",
-    headline: "You're ready to pilot, not to scale. Pick one well-scoped wedge, prove it with real users, and learn — resist the pull to roll out broadly before a single use case has earned it." },
+    headline: "You're ready to pilot, not to scale. Pick one well-scoped wedge, prove it with real users, and learn; resist the pull to roll out broadly before a single use case has earned it." },
   { max: 3.99, name: "Scaling", stage: "Rollout stage", color: "var(--scaling)",
-    headline: "You have real momentum. The risk now is uneven maturity — your weakest dimension will quietly cap everything the strong ones can do. Level the laggard before adding new use cases." },
+    headline: "You have real momentum. The risk now is uneven maturity: your weakest dimension will quietly cap everything the strong ones can do. Level the laggard before adding new use cases." },
   { max: 5.01, name: "Operating", stage: "Embedded stage", color: "var(--operating)",
     headline: "You're operating AI as a genuine capability, not a project. Protect it: the embedded stage erodes without ongoing governance and reinforcement. Maintenance is the work now." }
 ];
 
-/* Demo companies — FICTIONAL illustrative profiles (label, sublabel, levels) */
+/* Demo companies: FICTIONAL illustrative profiles (label, sublabel, levels) */
 const PRESETS = [
   {
     id: "clinic", label: "Meridian Clinic Network", sub: "Regional healthcare · compliance-heavy",
     sector: "Regional healthcare · compliance-heavy",
-    story: "A regional network of clinics with genuine executive interest and a strong compliance backbone — but patient data is locked in legacy systems and frontline staff are anxious and under-trained. Curious at the top; not yet ready on the ground.",
+    story: "A regional network of clinics with genuine executive interest and a strong compliance backbone, but patient data is locked in legacy systems and frontline staff are anxious and under-trained. Curious at the top; not yet ready on the ground.",
     levels: { leadership: 3, usecase: 2, data: 2, workforce: 2, governance: 3, change: 2 }
   },
   {
     id: "saas", label: "Northwind", sub: "Series B B2B SaaS · tech-forward",
     sector: "Series B B2B SaaS · tech-forward",
-    story: "A fast-moving B2B SaaS company with strong engineering, clearly scoped use cases, and the data plumbing to match. They're shipping AI features quickly — and their governance hasn't kept pace with how fast they're moving.",
+    story: "A fast-moving B2B SaaS company with strong engineering, clearly scoped use cases, and the data plumbing to match. They're shipping AI features quickly, and their governance hasn't kept pace with how fast they're moving.",
     levels: { leadership: 4, usecase: 4, data: 4, workforce: 3, governance: 2, change: 3 }
   },
   {
     id: "touring", label: "Atlas Touring Co.", sub: "Live entertainment · ops-heavy",
     sector: "Live entertainment · ops-heavy",
-    story: "A touring production company full of disciplined operators who execute change brilliantly under pressure. The crew adapts fast — but there's no executive AI sponsor and almost no data infrastructure beneath them. The people are ready before the systems are.",
+    story: "A touring production company full of disciplined operators who execute change brilliantly under pressure. The crew adapts fast, but there's no executive AI sponsor and almost no data infrastructure beneath them. The people are ready before the systems are.",
     levels: { leadership: 2, usecase: 3, data: 2, workforce: 2, governance: 2, change: 4 }
   }
 ];
@@ -565,7 +565,7 @@ function updateAccents(levels) {
   });
 }
 
-/* Company snapshot — shows the story + connects strength/gap to the cards */
+/* Company snapshot: shows the story + connects strength/gap to the cards */
 function renderSnapshot(presetId, levels) {
   const snap = document.getElementById("snapshot");
   const preset = presetId ? PRESETS.find(p => p.id === presetId) : null;
@@ -579,7 +579,7 @@ function renderSnapshot(presetId, levels) {
 }
 
 /* ============================================================
-   RENDER — overall + recommendation
+   RENDER: overall + recommendation
 ============================================================ */
 function updateOverall(levels) {
   const vals = DIMENSIONS.map(d => levels[d.id]);
@@ -600,13 +600,13 @@ function updateOverall(levels) {
   const weakLevel = levels[weak.id];
   document.getElementById("rec-headline").textContent = band.headline;
   document.getElementById("rec-move").innerHTML =
-    `<strong>Your highest-leverage move is in ${weak.name}</strong> (currently ${weakLevel}/5 — ${STAGE_LABELS[weakLevel]}): ${weak.levels[weakLevel].move}`;
+    `<strong>Your highest-leverage move is in ${weak.name}</strong> (currently ${weakLevel}/5, ${STAGE_LABELS[weakLevel]}): ${weak.levels[weakLevel].move}`;
 
   updateAccents(levels);
 }
 
 /* ============================================================
-   RENDER — dimension cards
+   RENDER: dimension cards
 ============================================================ */
 function buildDimCard(dim, level) {
   const card = document.createElement("div");
@@ -630,7 +630,7 @@ function buildDimCard(dim, level) {
     </div>
     <div class="dim-read" id="read-${dim.id}">${dim.levels[level].read}</div>
     <div class="dim-move-block" id="moveblock-${dim.id}">
-      <div class="dim-move-label" id="movelabel-${dim.id}">Next move — toward ${STAGE_LABELS[Math.min(level + 1, 5)]}</div>
+      <div class="dim-move-label" id="movelabel-${dim.id}">Next move · toward ${STAGE_LABELS[Math.min(level + 1, 5)]}</div>
       <div class="dim-move" id="move-${dim.id}">${dim.levels[level].move}</div>
     </div>
   `;
@@ -660,12 +660,12 @@ function refreshDim(dim, level) {
   const label = document.getElementById(`movelabel-${dim.id}`);
   if (level >= 5) {
     block.style.borderLeftColor = LEVEL_COLORS[5];
-    label.textContent = "Hold the gain — Embedded";
+    label.textContent = "Hold the gain · Embedded";
     label.style.color = LEVEL_COLORS[5];
   } else {
     const nextColor = LEVEL_COLORS[level + 1];
     block.style.borderLeftColor = nextColor;
-    label.textContent = `Next move — toward ${STAGE_LABELS[level + 1]}`;
+    label.textContent = `Next move · toward ${STAGE_LABELS[level + 1]}`;
     label.style.color = nextColor;
   }
 
