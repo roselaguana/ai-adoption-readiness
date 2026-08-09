@@ -32,4 +32,11 @@ One HTML file. No backend, no build step, no dependencies, no tracking. The rubr
 
 ## License
 
-MIT.
+Source-available under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+Free for noncommercial use.
+
+For commercial licensing, contact
+[rose.laguana@gmail.com](mailto:rose.laguana@gmail.com).
+
+Versions published before 2026-08-09 were released under the MIT License. That
+grant stands for those versions.
