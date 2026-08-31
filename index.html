@@ -5,39 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Adoption Readiness · a diagnostic by Rose Laguana</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     /* ======================================================
        DESIGN TOKENS: matches portfolio-site / literacy scorecard
     ====================================================== */
     :root {
-      --bg:          #0b0b0c;
-      --bg-deep:     #060607;
-      --card:        #141416;
-      --card-top:    #1a1a1d;
+      --bg:          #0A0908;
+      --bg-deep:     #060504;
+      --card:        #0E0D0C;
+      --card-top:    #131110;
 
-      --white:       #ffffff;
-      --ink:         #ece9e2;
-      --muted:       #a4a09a;
-      --faint:       #6f6c67;
+      --white:       #F2EEE7;
+      --ink:         #E8E3DA;
+      --muted:       #9C958A;
+      --faint:       #8A837A;
 
-      --gold:        #c8a951;
-      --gold-soft:   rgba(200,169,81,0.30);
-      --gold-dim:    rgba(200,169,81,0.12);
-      --highlight:   #f4d774;
+      --gold:        #A8946F;
+      --gold-soft:   rgba(138,122,94,0.34);
+      --gold-dim:    rgba(138,122,94,0.14);
+      --highlight:   #B9A47C;
 
-      --teal:        #4ba8a0;
-      --teal-soft:   rgba(75,168,160,0.25);
+      --teal:        #6B8A82;
+      --teal-soft:   rgba(107,138,130,0.28);
 
-      --foundation:  #c0563f;
-      --experiment:  #d4954a;
-      --scaling:     #4ba8a0;
-      --operating:   #4caf6a;
+      --foundation:  #8C5A4A;
+      --experiment:  #A08154;
+      --scaling:     #6B8A82;
+      --operating:   #6F8A62;
 
-      --line:        rgba(255,255,255,0.08);
+      /* text-safe variants. The ladder hues above work as fills and bars;
+         at 9-13px on a near-black ground they fall under WCAG AA, so small
+         text uses these instead. */
+      --operating-t: #93B383;
+      --experiment-t:#C6A87C;
+      --teal-t:      #94B3AB;
+
+      --line:        rgba(232,227,218,0.09);
       --maxw:        860px;
 
-      --serif: "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
-      --sans:  -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --serif: "Cormorant Garamond",Palatino,Georgia,serif;
+      --sans:  "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,11 +116,11 @@
       padding: 0.22em 0.75em; border-radius: 2px;
       background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-soft);
     }
-    .meta-tag.demo { background: var(--teal-soft); color: var(--teal); border-color: var(--teal-soft); }
+    .meta-tag.demo { background: rgba(107,138,130,0.18); color: var(--teal-t); border-color: rgba(107,138,130,0.40); }
 
     /* INTRO CALLOUT */
     .callout {
-      background: linear-gradient(135deg, #0e1218 0%, #0d0f0e 100%);
+      background: linear-gradient(135deg, #100E0C 0%, #0D0B0A 100%);
       border: 1px solid var(--teal-soft);
       border-left: 3px solid var(--teal);
       border-radius: 4px;
@@ -139,7 +149,7 @@
     .preset-btn:hover { border-color: var(--gold-soft); color: var(--gold); }
     .preset-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
     .preset-btn small { display: block; font-weight: 400; font-size: 0.72rem; color: var(--faint); margin-top: 0.15rem; }
-    .preset-btn.active small { color: var(--gold-soft); }
+    .preset-btn.active small { color: var(--muted); }
 
     /* OVERALL READINESS BANNER */
     .score-banner {
@@ -171,7 +181,7 @@
 
     /* RECOMMENDATION PANEL */
     .rec-panel {
-      background: linear-gradient(135deg, #14110a 0%, #0d0f0e 100%);
+      background: linear-gradient(135deg, #131009 0%, #0D0B0A 100%);
       border: 1px solid var(--gold-soft);
       border-radius: 4px; padding: 1.6rem 1.8rem; margin-bottom: 3rem;
     }
@@ -245,7 +255,7 @@
 
     /* COMPANY SNAPSHOT (per demo client) */
     .snapshot {
-      background: linear-gradient(135deg, #0e1116 0%, #0d0f0e 100%);
+      background: linear-gradient(135deg, #100E0C 0%, #0D0B0A 100%);
       border: 1px solid var(--line); border-left: 3px solid var(--teal);
       border-radius: 4px; padding: 1.4rem 1.7rem; margin-bottom: 1.7rem;
       opacity: 0; max-height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0;
@@ -269,12 +279,12 @@
       opacity: 0; transition: opacity 0.25s ease;
     }
     .dim-badge.show { opacity: 1; }
-    .dim-badge.strength { background: rgba(76,175,106,0.15); color: var(--operating); border: 1px solid rgba(76,175,106,0.35); }
-    .dim-badge.gap { background: rgba(212,149,74,0.15); color: var(--experiment); border: 1px solid rgba(212,149,74,0.35); }
-    .dim-card.is-strength { border-color: rgba(76,175,106,0.4); }
-    .dim-card.is-gap { border-color: rgba(212,149,74,0.45); }
-    .dim-badge.mid { background: rgba(164,160,154,0.12); color: var(--muted); border: 1px solid rgba(164,160,154,0.32); }
-    .dim-card.is-mid { border-color: rgba(164,160,154,0.22); }
+    .dim-badge.strength { background: rgba(111,138,98,0.18); color: var(--operating-t); border: 1px solid rgba(111,138,98,0.42); }
+    .dim-badge.gap { background: rgba(160,129,84,0.18); color: var(--experiment-t); border: 1px solid rgba(160,129,84,0.42); }
+    .dim-card.is-strength { border-color: rgba(111,138,98,0.46); }
+    .dim-card.is-gap { border-color: rgba(160,129,84,0.50); }
+    .dim-badge.mid { background: rgba(156,149,138,0.12); color: var(--ink); border: 1px solid rgba(156,149,138,0.32); }
+    .dim-card.is-mid { border-color: rgba(156,149,138,0.22); }
     .dim-card { transition: border-color 0.25s; }
 
     /* NEXT-MOVE block: color tracks the slider level */
@@ -371,7 +381,7 @@
       show how the scoring behaves across different maturity shapes, not records of real engagements.
     </p>
     <p>
-      <strong>Why I built it.</strong> I spent 27 years running operations on the road for live productions: the work of
+      <strong>Why I built it.</strong> I spent two decades in live production, on the road from 2005 to 2026: the work of
       getting people, systems, and a plan to actually hold up under pressure. This tool applies that operator's lens to AI
       adoption. The scoring logic is deterministic and runs entirely in your browser; there is no backend and nothing is collected.
     </p>
@@ -392,7 +402,10 @@ const STORAGE_KEY = "ai-adoption-readiness-v1";
 
 const STAGE_LABELS = ["", "Nascent", "Exploring", "Developing", "Scaling", "Embedded"];
 // Maturity ramp: where this dimension stands, 1 (foundation) → 5 (embedded)
-const LEVEL_COLORS = ["", "#c0563f", "#d4954a", "#c8a951", "#4ba8a0", "#4caf6a"];
+// Levels 1-5. Desaturated to match the quiet luxury palette while staying
+// distinguishable from each other. These drive the bars, slider thumbs and the
+// legend dots, and they are set from JS, so the :root tokens do not reach them.
+const LEVEL_COLORS = ["", "#8C5A4A", "#A08154", "#A8946F", "#6B8A82", "#6F8A62"];
 
 const DIMENSIONS = [
   {
