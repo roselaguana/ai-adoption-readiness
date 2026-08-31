@@ -300,6 +300,35 @@
     footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--faint); }
     footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
     footer a:hover { color: var(--gold); }
+
+    /* ---- Condition layer: who has to absorb this, and can they ---- */
+    .org-block { border: 1px solid var(--line); border-radius: 3px; background: var(--card);
+      padding: 1.4rem 1.5rem; margin: 0 0 1.6rem; }
+    .org-block .org-intro { font-size: 0.86rem; color: var(--muted); margin: 0 0 1.3rem; max-width: 62ch; }
+    .org-field { margin-bottom: 1.5rem; }
+    .org-field:last-child { margin-bottom: 0; }
+    .org-q { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--faint); margin-bottom: 0.7rem; }
+    .org-input { width: 100%; max-width: 34rem; background: var(--bg-deep); color: var(--ink);
+      border: 1px solid var(--line); border-radius: 3px; padding: 0.6rem 0.75rem;
+      font-family: var(--sans); font-size: 0.92rem; }
+    .org-input:focus { outline: none; border-color: var(--gold); }
+    .org-input::placeholder { color: var(--faint); }
+    .org-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .org-opt { background: var(--bg-deep); color: var(--muted); border: 1px solid var(--line);
+      border-radius: 3px; padding: 0.5rem 0.8rem; font-family: var(--sans); font-size: 0.82rem;
+      cursor: pointer; text-align: left; transition: border-color .2s, color .2s, background .2s; }
+    .org-opt:hover { border-color: var(--gold-soft); color: var(--ink); }
+    .org-opt.on { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+    .cond-panel { border-left: 2px solid var(--gold); background: var(--card);
+      padding: 1.1rem 1.3rem; margin: 0 0 1.1rem; border-radius: 0 3px 3px 0; }
+    .cond-name { font-family: var(--serif); font-size: 1.25rem; color: var(--ink); margin-bottom: 0.5rem; }
+    .cond-read { font-size: 0.92rem; color: var(--muted); max-width: 66ch; }
+    .cond-for { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--faint); margin-bottom: 0.55rem; }
+    .rec-override { color: var(--ink); }
+    .rec-secondary { font-size: 0.88rem; color: var(--muted); margin-top: 0.8rem; }
   </style>
 </head>
 <body>
@@ -320,13 +349,41 @@
     <p>
       Most AI initiatives don't fail on the model; they fail on <strong>adoption</strong>: no clear owner, no scoped use case,
       no governance, no plan for making the change stick. This tool scores readiness across <strong>six dimensions</strong>,
-      surfaces your weakest link, and names the single highest-leverage next move. <strong>Load a demo company below</strong>
-      to see it work, then move the sliders to model your own.
+      surfaces your weakest link, and names the single highest-leverage next move.
+      It also asks two questions the score cannot answer: whether your people <strong>trust</strong> that a change will
+      outlive its announcement, and whether they have any <strong>room</strong> left to absorb one. Where those two say no,
+      the tool will tell you so, and will say plainly that the technical gap is not your first move.
+      <strong>Load a demo company below</strong> to see it work, then move the sliders to model your own.
     </p>
   </div>
 
   <div class="preset-label">Start with a demo, or score your own</div>
   <div class="preset-row" id="preset-row"><!-- buttons injected --></div>
+
+
+  <!-- CONDITION LAYER -->
+  <div class="org-block">
+    <p class="org-intro">
+      Readiness scores measure whether an organization <em>can</em>. These two questions ask whether its
+      people <em>will</em>. That is usually the part that decides it, and it is the part most assessments skip.
+    </p>
+
+    <div class="org-field">
+      <div class="org-q">What line of work are you in?</div>
+      <input class="org-input" id="org-industry" type="text" autocomplete="off"
+             placeholder="e.g. regional healthcare, live production, commercial insurance">
+    </div>
+
+    <div class="org-field">
+      <div class="org-q">When leadership announces a change here, what do people actually expect?</div>
+      <div class="org-opts" id="org-trust"></div>
+    </div>
+
+    <div class="org-field">
+      <div class="org-q">What state are the people who would absorb this actually in?</div>
+      <div class="org-opts" id="org-load"></div>
+    </div>
+  </div>
 
   <!-- COMPANY SNAPSHOT (per demo client) -->
   <div class="snapshot" id="snapshot">
@@ -357,6 +414,11 @@
   <!-- RECOMMENDATION -->
   <div class="rec-panel">
     <div class="rec-label">Where to start</div>
+    <div class="cond-panel" id="cond-panel" hidden>
+      <div class="cond-for" id="cond-for"></div>
+      <div class="cond-name" id="cond-name"></div>
+      <div class="cond-read" id="cond-read"></div>
+    </div>
     <div class="rec-headline" id="rec-headline">–</div>
     <div class="rec-move" id="rec-move">–</div>
   </div>
@@ -522,6 +584,103 @@ const PRESETS = [
   }
 ];
 
+
+/* ============================================================
+   CONDITION LAYER
+   Readiness scores measure whether an organisation CAN. These two
+   questions ask whether its people WILL. Rose's thesis, 2026-08-30:
+   adoption fails because people are burned out, tired of the politics,
+   unhappy with management, or simply past caring. It is a mindset.
+   Condition is a LENS over the six dimensions, not a seventh score:
+   it never changes the number, it changes what the number means.
+============================================================ */
+const ORG_KEY = "ai-adoption-readiness-org-v1";
+
+const TRUST_OPTS = [
+  { v: 0, t: "It'll happen, and we'll be supported through it" },
+  { v: 1, t: "Wait and see. Some will, some won't" },
+  { v: 2, t: "It'll be announced, then quietly dropped like the last one" },
+  { v: 3, t: "It's cover for something else" }
+];
+const LOAD_OPTS = [
+  { v: 0, t: "Steady. There's slack in the day" },
+  { v: 1, t: "Busy, but functioning" },
+  { v: 2, t: "Running hot. Most people are at capacity" },
+  { v: 3, t: "Burned out. Turnover is visible" }
+];
+
+const CONDITIONS = {
+  willing_room: {
+    name: "They're with you, and they have the room.",
+    read: "This is the uncommon case, and it means the score below is telling you the truth. Nothing in the condition of this organisation is blocking adoption, so the technical gap really is the gap. Move on it.",
+    override: null
+  },
+  willing_noroom: {
+    name: "They're willing. They have no capacity.",
+    read: "Goodwill without room is a countdown. Anything you add lands on people already at their limit, and the first thing to give will be the new thing, because it is the only optional thing on the list. Your constraint is not the dimension below. It is the calendar.",
+    override: "Decide what this replaces before you decide what it does. A pilot that arrives as extra work gets abandoned by people who agreed with it."
+  },
+  capable_nobelief: {
+    name: "They can. They don't believe you.",
+    read: "The skill is there and the hours are there. What is missing is any reason to believe this initiative will outlive its announcement. Your dimension scores are real and they will not save you, because adoption is a bet people place on management, and here that bet has been losing.",
+    override: "Finish something small and visible that you already started, before you announce anything new. Credibility is rebuilt by completion, not by a better rollout plan."
+  },
+  neither: {
+    name: "Burned out, and past believing.",
+    read: "This is the hardest place to start from and the most common one nobody scores. An AI initiative here does not fail on the technology. It fails because there is nothing left to spend and no reason to spend it. The score below describes a capability that will not get exercised.",
+    override: "This is not an AI problem yet. Reduce the load or repair the trust, visibly, before a single agent ships. Anything else is a rollout into an empty room."
+  }
+};
+
+let ORG = { industry: "", trust: null, load: null };
+
+function loadOrg() {
+  try { const raw = localStorage.getItem(ORG_KEY); if (raw) return JSON.parse(raw); } catch (_) {}
+  return { industry: "", trust: null, load: null };
+}
+function saveOrg() { try { localStorage.setItem(ORG_KEY, JSON.stringify(ORG)); } catch (_) {} }
+
+/* Both answered, or there is no reading to give. Refusing to guess is the point. */
+function conditionKey() {
+  if (ORG.trust === null || ORG.load === null) return null;
+  const lowTrust = ORG.trust >= 2, highLoad = ORG.load >= 2;
+  if (!lowTrust && !highLoad) return "willing_room";
+  if (!lowTrust && highLoad)  return "willing_noroom";
+  if (lowTrust && !highLoad)  return "capable_nobelief";
+  return "neither";
+}
+
+function buildOrgOpts(hostId, opts, field) {
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "org-opt" + (ORG[field] === o.v ? " on" : "");
+    b.textContent = o.t;
+    b.addEventListener("click", () => {
+      ORG[field] = (ORG[field] === o.v) ? null : o.v;   // click again to clear
+      saveOrg();
+      buildOrgOpts(hostId, opts, field);
+      updateOverall(LEVELS);
+    });
+    host.appendChild(b);
+  });
+}
+
+function renderCondition() {
+  const key = conditionKey();
+  const panel = document.getElementById("cond-panel");
+  if (!key) { panel.hidden = true; return null; }
+  const c = CONDITIONS[key];
+  panel.hidden = false;
+  const ind = (ORG.industry || "").trim();
+  document.getElementById("cond-for").textContent = ind ? ("Reading for " + ind) : "Condition";
+  document.getElementById("cond-name").textContent = c.name;
+  document.getElementById("cond-read").textContent = c.read;
+  return c;
+}
+
 /* ============================================================
    STATE
 ============================================================ */
@@ -612,8 +771,18 @@ function updateOverall(levels) {
   const weak = weakestDim(levels);
   const weakLevel = levels[weak.id];
   document.getElementById("rec-headline").textContent = band.headline;
-  document.getElementById("rec-move").innerHTML =
-    `<strong>Your highest-leverage move is in ${weak.name}</strong> (currently ${weakLevel}/5, ${STAGE_LABELS[weakLevel]}): ${weak.levels[weakLevel].move}`;
+  const cond = renderCondition();
+  if (cond && cond.override) {
+    // The condition outranks the score. A real gap is still a gap, but it is not
+    // what you do first, and saying otherwise would be the comfortable answer.
+    document.getElementById("rec-move").innerHTML =
+      `<span class="rec-override"><strong>Start here instead.</strong> ${cond.override}</span>` +
+      `<div class="rec-secondary">Your weakest dimension is <strong>${weak.name}</strong> ` +
+      `(${weakLevel}/5, ${STAGE_LABELS[weakLevel]}), and that gap is real. It is not your first move.</div>`;
+  } else {
+    document.getElementById("rec-move").innerHTML =
+      `<strong>Your highest-leverage move is in ${weak.name}</strong> (currently ${weakLevel}/5, ${STAGE_LABELS[weakLevel]}): ${weak.levels[weakLevel].move}`;
+  }
 
   updateAccents(levels);
 }
@@ -775,6 +944,13 @@ function init() {
   buildLegend();
   buildPresets(id => applyLevels(presetLevels(id), id));
   wire();
+
+  ORG = loadOrg();
+  const indEl = document.getElementById("org-industry");
+  indEl.value = ORG.industry || "";
+  indEl.addEventListener("input", () => { ORG.industry = indEl.value; saveOrg(); renderCondition(); });
+  buildOrgOpts("org-trust", TRUST_OPTS, "trust");
+  buildOrgOpts("org-load",  LOAD_OPTS,  "load");
 
   const stored = loadState();
   if (stored && stored.levels) {
